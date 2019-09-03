@@ -1,0 +1,6 @@
+# Genetic Algorithm Examined under a Neutral Model Framework
+
+This repository contains final version the source code, and experiment results of my master degree dissertation. The source code is organised under directory `java`. Documentation of the source code is delivered as `javadoc` in the source code. The source code and documentation can be directly compiled using `javac` and `javadoc` command on all source files under `java/src` directory. However, there are a few shell-script under `java` directory to ease the compilation and execution of the project. Details on how to use the shell scripts are listed in the `README.md` file under the `java` directory.
+
+# For future development
+Our project produces a platform for evaluating travelling salesman problem. New algorithms can be added to the software as plugins. Any class implement the `xing.core.Algorithm` interface and put under xing.algorithm directory can be automatically detected and loaded by our GUI interface. Similarly, problem sets can be added by implementing the `xing.core.ProblemGenerator` or `xing.core.ProblemGenerator2D` interfaces. For problems to be used in the GUI, `ProblemGenerator2D` must be implemented. For arbitary problems, implementing `ProblemGenerator` is sufficient to run by our command-line interface.

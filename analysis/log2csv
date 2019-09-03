@@ -1,0 +1,31 @@
+#!/usr/bin/env awk -f
+
+BEGIN {
+    FS=":";
+    prefix="";
+    ORS="";
+    printed=0;
+    printf("Iteration,Death,Replace,Mutation,Migration,Time,Found,Score\n");
+} # BEGIN
+{
+    count = (NR - 1) % 16;
+    if (count >= 1 && count <= 5 || count == 11 || count >= 13 && count <= 14)
+    {
+        gsub(/^ +/, "", $2);
+        gsub("ms", "", $2);
+        #print prefix,$2
+        printf("%s%s", prefix, $2);
+        printed++;
+        if (printed % 8 == 0) {
+            prefix="\n";
+        }
+        else {
+            prefix=",";
+        }
+    }
+        
+}
+END {
+    print("\n");
+}
+

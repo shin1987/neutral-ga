@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+import sys
+
+operation = {
+    '+': lambda x, y: x + y,
+    '-': lambda x, y: x - y,
+    '*': lambda x, y: x * y,
+    '/': lambda x, y: x / y,
+    '<': lambda x, y: int(x < y),
+    '>': lambda x, y: int(x > y),
+    '<=': lambda x, y: int(x <= y),
+    '>=': lambda x, y: int(x >= y),
+    '==': lambda x, y: int(x == y),
+    '!=': lambda x, y: int(x != y)
+}
+
+action = sys.argv[1]
+a = float(sys.argv[2])
+b = float(sys.argv[3])
+
+sys.stdout.write("{}".format(operation[action](a, b)))

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# javadoc -d doc -sourcepath src xing.core
+
+find src -name "*.java" | sed 's!src/!!g' | sed -E 's!/[^/]+\.java!!g' | \
+    sort | uniq | sed 's!/!.!g' | xargs javadoc -sourcepath src -d doc

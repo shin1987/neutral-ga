@@ -1,0 +1,8 @@
+#!/bin/bash
+
+build=build
+junit=3rdparty/junit-console.jar
+hamcrest=3rdparty/hamcrest.jar
+prefix='xing'
+
+java -jar $junit -cp $build:$hamcrest -c $prefix.$1

@@ -1,0 +1,25 @@
+#!/usr/bin/env awk -f
+
+BEGIN {
+    printf("Time,Found,Score,Solution\n");
+    prefix="";
+    ORS="";
+    printed=0;
+}
+{
+    count = (NR - 1) % 11;
+    if (count == 6 || count == 8 || count == 9 || count == 10) {
+        gsub(/(.+: +|ms)/, "", $0);
+        printf("%s%s", prefix, $0);
+        printed++;
+        if (printed % 4 == 0) {
+            prefix = "\n";
+        }
+        else {
+            prefix = ",";
+        }
+    }
+}
+END {
+    print("\n");
+}

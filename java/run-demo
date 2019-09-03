@@ -1,0 +1,6 @@
+#!/bin/bash
+
+build=build
+prefix='xing'
+
+java -cp $build $prefix.$1

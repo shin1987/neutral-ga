@@ -1,0 +1,37 @@
+#!/bin/bash
+compile_test=0 # 0 no test
+
+to_compile=()
+
+option=''
+
+while (( "$#" ))
+do
+    case $1 in
+        "-test")
+            compile_test=1
+            ;;
+        -*)
+            option="$option $1"
+            ;;
+        *)
+            to_compile+=($1)
+            ;;
+    esac
+    shift
+done
+
+for fullname in ${to_compile[@]}
+do
+    class_path=$(echo $fullname | sed 's!\.!/!g')
+    class_name=${fullname##*.}
+
+    package_name=$(echo $fullname | sed -E 's/((\.[a-zA-Z]+)*)\.[a-zA-Z]+/\1/')
+    package_path=xing/$(echo $package_name | sed 's!\.!/!g')
+
+    test -d build || mkdir build
+
+    javac -Xlint $option -sourcepath src src/xing/$class_path.java -d build
+done
+
+

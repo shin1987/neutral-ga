@@ -1,0 +1,101 @@
+#!/bin/bash
+visibility='public '
+class_type='class'
+modifier=''
+add_test=2 # 0 no test, 1 force test, 2 default, 3 test only
+
+to_create=()
+
+while (( "$#" ))
+do
+    case $1 in
+        "--package")
+            visibility=''
+            ;;
+        "--abstract")
+            modifier='abstract ' # don't forget final space
+            ;;
+        "--interface")
+            class_type='interface'
+            ;;
+        "--enum")
+            class_type='enum'
+            ;;
+        "--no-test")
+            add_test=0
+            ;;
+        "--with-test")
+            add_test=1
+            ;;
+        "--test-only")
+            add_test=3
+            ;;                
+        *)
+            to_create+=($1)
+            ;;
+    esac
+    shift
+done
+
+for fullname in ${to_create[@]}
+do
+    echo "Create $fullname"
+    class_path=$(echo $fullname | sed 's!\.!/!g')
+    class_name=${fullname##*.}
+    test_class_path=$(echo $class_path | sed "s!$class_name!Test$class_name!g")
+
+    package_name=$(echo $fullname | \
+                       sed -E 's/((\.[a-zA-Z0-9]+)*)\.[a-zA-Z0-9]+/\1/')
+    package_path=xing/$(echo $package_name | sed 's!\.!/!g')
+
+    if [[ $add_test != 3 ]]
+    then
+        echo "Generate source code"
+        test -d src/$package_path || mkdir -p src/$package_path
+        (cat<<EOF
+package xing.$package_name;
+
+/**
+ * @author Xing Yu
+ */
+$visibility$modifier$class_type $class_name
+{
+} // ${class_type} $class_name
+EOF
+        ) > src/xing/$class_path.java
+    fi
+
+    # Add test
+    if [[ $add_test == 0 ]] || ( [[ $add_test == 2 ]] && \
+                                     ( [ $class_type != "class" ] || \
+                                           ( [ -n "$modifier" ] && \
+                                           [ $modifier == "abstract" ] ) ) )
+    then
+        echo "No test"
+        continue
+    fi
+
+    
+    test -d test/$package_path || mkdir -p test/$package_path
+
+    (cat<<EOF
+package xing.$package_name;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
+import org.junit.jupiter.api.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+
+/**
+ * @author Xing Yu
+ */
+public class Test${class_name}
+{
+} // class Test${class_name}
+
+EOF
+    ) > test/xing/$test_class_path.java
+done
+
+

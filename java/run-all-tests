@@ -1,0 +1,39 @@
+#!/bin/bash
+compile_only=0
+source_only=0
+JAVAC='javac -Xlint'
+while (( "$#" ))
+do
+    case $1 in
+        "--source-only")
+            source_only=1
+            ;;
+        "--compile-only")
+            compile_only=1
+            ;;
+    esac
+    shift
+done
+
+# Compiling process
+build='build'
+
+mkdir -p $build
+junit=3rdparty/junit-console.jar
+hamcrest=3rdparty/hamcrest.jar
+
+find src -name "*.java" | xargs $JAVAC -d $build -sourcepath src || exit 1
+
+if [[ $source_only -eq 0 ]]
+then
+    find test -name "*.java" | \
+        xargs $JAVAC -cp $build:$junit:$hamcrest -sourcepath test \
+              -d $build || exit 1
+fi
+
+
+test $compile_only -ne 0 && exit 0
+# Run Test
+find $build -name "*.class" | sed -E 's!\/[^\/]+class!!' | uniq | \
+    sed "s!^$build\/!!g" | sed -E 's!(.+)!-p \1!g' | sed -E 's!\/!.!g' \
+    | xargs java -jar $junit -cp $build:$hamcrest

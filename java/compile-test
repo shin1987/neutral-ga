@@ -1,0 +1,11 @@
+#!/bin/bash
+
+src="test/xing"
+
+suffix=$(echo "$1" | sed -E 's!\.!/!g')
+
+source="$src/$suffix.java"
+
+junit=3rdparty/junit-console.jar:3rdparty/hamcrest.jar
+
+javac -Xlint -sourcepath test:src -cp build:$junit -d build $source

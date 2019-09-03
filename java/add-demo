@@ -1,0 +1,35 @@
+#!/bin/bash
+to_create=()
+
+while (( "$#" ))
+do
+    echo $1
+    to_create+=($1)
+    shift
+done
+
+for fullname in ${to_create[@]}
+do
+    echo "Create $fullname"
+    class_path=$(echo $fullname | sed 's!\.!/!g')
+    class_name=${fullname##*.}
+
+    package_name=$(echo $fullname | sed -E 's/((\.[a-zA-Z]+)*)\.[a-zA-Z]+/\1/')
+    package_path=xing/$(echo $package_name | sed 's!\.!/!g')
+
+    echo "Generate source code"
+    test -d demo/$package_path || mkdir -p demo/$package_path
+    (cat<<EOF
+package xing.$package_name;
+
+/**
+ * @author Xing Yu
+ */
+public class $class_name
+{
+} // ${class_type} $class_name
+EOF
+    ) > demo/xing/$class_path.java
+done
+
+
